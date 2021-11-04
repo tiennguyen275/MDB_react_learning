@@ -51,7 +51,6 @@ export const useMovieFetch = movieId => {
                 });
     
                 setLoading(false);
-    
             } catch (error) {
                 setError(true);
             }
