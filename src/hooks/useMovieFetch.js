@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'; //add useCallback if let fetchMovie outside
 import API from '../API';
+//Helpers
+import { isPersistedState } from '../helpers';
 
 export const useMovieFetch = movieId => {
     const [state, setState] = useState({});
@@ -55,9 +57,20 @@ export const useMovieFetch = movieId => {
                 setError(true);
             }
         };
+
+        const sessionState = isPersistedState(movieId);
+        if(sessionState) {
+            setState(sessionState);
+            setLoading(false);
+            return; //skip under function
+        }
+
         fetchMovie(); //invoke data
     }, [movieId]); //add fetchMovie if let it outside of useEffect
  
-
+    //Write to session
+    useEffect(() => {
+        sessionStorage.setItem(movieId, JSON.stringify(state));
+    },[movieId, state]);
     return { state, loading, error };
 };
